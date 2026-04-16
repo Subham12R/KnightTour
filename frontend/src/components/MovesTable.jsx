@@ -14,10 +14,31 @@ function jumpLabel(from, to) {
 }
 
 export default function MovesTable({ path, currentStep, boardSize }) {
-  const activeRowRef = useRef(null)
+  const tableContainerRef = useRef(null)
 
   useEffect(() => {
-    activeRowRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (currentStep < 0) return
+
+    const container = tableContainerRef.current
+    if (!container) return
+
+    const activeRow = container.querySelector(`tr[data-step="${currentStep}"]`)
+    if (!activeRow) return
+
+    const padding = 8
+    const rowTop = activeRow.offsetTop
+    const rowBottom = rowTop + activeRow.offsetHeight
+    const viewTop = container.scrollTop
+    const viewBottom = viewTop + container.clientHeight
+
+    if (rowTop < viewTop + padding) {
+      container.scrollTo({ top: Math.max(0, rowTop - padding), behavior: 'smooth' })
+      return
+    }
+
+    if (rowBottom > viewBottom - padding) {
+      container.scrollTo({ top: rowBottom - container.clientHeight + padding, behavior: 'smooth' })
+    }
   }, [currentStep])
 
   if (path.length === 0) return null
@@ -29,7 +50,7 @@ export default function MovesTable({ path, currentStep, boardSize }) {
         <span className="text-xs font-mono text-neutral-500">{path.length} moves</span>
       </div>
 
-      <div className="overflow-y-auto border border-[#2a2a2a] rounded" style={{ maxHeight: 280 }}>
+      <div ref={tableContainerRef} className="overflow-y-auto border border-[#2a2a2a] rounded" style={{ maxHeight: 280 }}>
         <table className="w-full text-xs border-collapse">
           <thead className="sticky top-0 z-10 bg-[#1a1a1a]">
             <tr className="border-b border-[#2a2a2a] text-left text-neutral-500">
@@ -51,7 +72,7 @@ export default function MovesTable({ path, currentStep, boardSize }) {
               return (
                 <tr
                   key={i}
-                  ref={isCurrent ? activeRowRef : null}
+                  data-step={i}
                   className={[
                     'border-b border-[#222] transition-colors',
                     isCurrent ? 'bg-amber-500/10' : 'hover:bg-[#222]',
