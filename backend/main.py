@@ -20,6 +20,8 @@ def health():
     return {"status": "ok", "message": "Knight's Tour API is running"}
 
 
+# Support both direct local calls (/api/tour) and prefixed platform mounts (/api -> /tour).
+@app.post("/tour")
 @app.post("/api/tour")
 def compute_tour(req: TourRequest):
     if req.start_x >= req.board_size or req.start_y >= req.board_size:
