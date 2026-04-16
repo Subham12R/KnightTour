@@ -11,7 +11,6 @@ const ALGO_DESC = {
 }
 
 const BORDER = 'border-[#2a2a2a]'
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? ''
 
 export default function App() {
   const [boardSize,        setBoardSize]        = useState(8)
@@ -66,7 +65,7 @@ export default function App() {
     stopAnimation(); setIsLoading(true); setError(null)
     setPath([]); setCurrentStep(-1); setStats(null)
     try {
-      const res = await fetch(`${API_BASE_URL}/api/tour`, {
+      const res = await fetch('/api/tour', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ start_x: startPos[0], start_y: startPos[1], board_size: boardSize, algorithm }),

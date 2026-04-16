@@ -1,28 +1,11 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-import os
 import time
 
 from algorithms.warnsdorff import solve_warnsdorff
 from algorithms.backtracking import solve_backtracking
 
 app = FastAPI(title="Knight's Tour API", version="1.0.0")
-
-
-def _load_cors_origins() -> list[str]:
-    raw_origins = os.getenv(
-        "BACKEND_CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173",
-    )
-    return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_load_cors_origins(),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 class TourRequest(BaseModel):
